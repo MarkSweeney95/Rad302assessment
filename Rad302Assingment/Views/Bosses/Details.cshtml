@@ -1,0 +1,66 @@
+﻿@model Rad302Assingment.Models.Bosses
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Bosses</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.location)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.location)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.weakness)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.weakness)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.health)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.health)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.resistences)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.resistences)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.imageURL)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.imageURL)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.ID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
