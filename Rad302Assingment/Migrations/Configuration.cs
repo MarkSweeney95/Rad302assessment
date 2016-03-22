@@ -27,7 +27,7 @@ namespace Rad302Assingment.Migrations
 
             List<Bosses> Bosses = new List<Bosses>()
             {
-                new Bosses {imageURL="~/Content/Images/DS1/Taurus_Demon.png",name = "Taurus Demon",location="Undead Burg",weakness="Fire and Lighting",health=1215,resistences="None",ID=1 },
+                new Bosses {ID=1,name = "Taurus Demon",location="Undead Burg",weakness="Fire and Lighting",health=1215,resistences="None", GameName="Dark Souls "},
             };
             Bosses.ForEach(b => context.Bosses.Add(b));
             context.SaveChanges();

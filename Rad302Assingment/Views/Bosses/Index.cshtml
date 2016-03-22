@@ -26,9 +26,7 @@
         <th>
             @Html.DisplayNameFor(model => model.resistences)
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.imageURL)
-        </th>
+      
         <th></th>
     </tr>
 
@@ -49,9 +47,7 @@
         <td>
             @Html.DisplayFor(modelItem => item.resistences)
         </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.imageURL)
-        </td>
+      
         <td>
             @Html.ActionLink("Edit", "Edit", new { id=item.ID }) |
             @Html.ActionLink("Details", "Details", new { id=item.ID }) |

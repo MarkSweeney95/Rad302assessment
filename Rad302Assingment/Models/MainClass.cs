@@ -31,8 +31,8 @@ namespace Rad302Assingment.Models
         public string weakness { get; set; }
         public double health { get; set; }
         public string resistences { get; set; }
-
-        public string imageURL { get; set; }
+        public string GameName { get; set;}
+        
 
        
 
