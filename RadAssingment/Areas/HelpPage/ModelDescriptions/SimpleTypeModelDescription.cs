@@ -1,0 +1,6 @@
+namespace RadAssingment.Areas.HelpPage.ModelDescriptions
+{
+    public class SimpleTypeModelDescription : ModelDescription
+    {
+    }
+}
