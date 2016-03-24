@@ -2,113 +2,103 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
-using System.Web;
-using System.Web.Mvc;
+using System.Net.Http;
+using System.Web.Http;
+using System.Web.Http.Description;
 using RadAssingment.Models;
 
 namespace RadAssingment.Controllers
 {
-    public class BossClassesController : Controller
+    public class BossClassesController : ApiController
     {
         private BossContext db = new BossContext();
 
-        // GET: BossClasses
-        public ActionResult Index()
+        // GET: api/BossClasses
+        public IQueryable<BossClass> GetBosses()
         {
-            return View(db.Bosses.ToList());
+            return db.Bosses;
         }
 
-        // GET: BossClasses/Details/5
-        public ActionResult Details(int? id)
+        // GET: api/BossClasses/5
+        [ResponseType(typeof(BossClass))]
+        public IHttpActionResult GetBossClass(int id)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
             BossClass bossClass = db.Bosses.Find(id);
             if (bossClass == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
-            return View(bossClass);
+
+            return Ok(bossClass);
         }
 
-        // GET: BossClasses/Create
-        public ActionResult Create()
+        // PUT: api/BossClasses/5
+        [ResponseType(typeof(void))]
+        public IHttpActionResult PutBossClass(int id, BossClass bossClass)
         {
-            return View();
-        }
-
-       
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ID,image,Name,Location,Health,Resistences,Weaknesses,SoulsGiven")] BossClass bossClass)
-        {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                db.Bosses.Add(bossClass);
+                return BadRequest(ModelState);
+            }
+
+            if (id != bossClass.ID)
+            {
+                return BadRequest();
+            }
+
+            db.Entry(bossClass).State = EntityState.Modified;
+
+            try
+            {
                 db.SaveChanges();
-                return RedirectToAction("Index");
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!BossClassExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
             }
 
-            return View(bossClass);
+            return StatusCode(HttpStatusCode.NoContent);
         }
 
-        // GET: BossClasses/Edit/5
-        public ActionResult Edit(int? id)
+        // POST: api/BossClasses
+        [ResponseType(typeof(BossClass))]
+        public IHttpActionResult PostBossClass(BossClass bossClass)
         {
-            if (id == null)
+            if (!ModelState.IsValid)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return BadRequest(ModelState);
             }
+
+            db.Bosses.Add(bossClass);
+            db.SaveChanges();
+
+            return CreatedAtRoute("DefaultApi", new { id = bossClass.ID }, bossClass);
+        }
+
+        // DELETE: api/BossClasses/5
+        [ResponseType(typeof(BossClass))]
+        public IHttpActionResult DeleteBossClass(int id)
+        {
             BossClass bossClass = db.Bosses.Find(id);
             if (bossClass == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
-            return View(bossClass);
-        }
 
-    
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ID,image,Name,Location,Health,Resistences,Weaknesses,SoulsGiven")] BossClass bossClass)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Entry(bossClass).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            return View(bossClass);
-        }
-
-        // GET: BossClasses/Delete/5
-        public ActionResult Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            BossClass bossClass = db.Bosses.Find(id);
-            if (bossClass == null)
-            {
-                return HttpNotFound();
-            }
-            return View(bossClass);
-        }
-
-        // POST: BossClasses/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
-        {
-            BossClass bossClass = db.Bosses.Find(id);
             db.Bosses.Remove(bossClass);
             db.SaveChanges();
-            return RedirectToAction("Index");
+
+            return Ok(bossClass);
         }
 
         protected override void Dispose(bool disposing)
@@ -118,6 +108,11 @@ namespace RadAssingment.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        private bool BossClassExists(int id)
+        {
+            return db.Bosses.Count(e => e.ID == id) > 0;
         }
     }
 }
