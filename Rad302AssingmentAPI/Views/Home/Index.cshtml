@@ -20,14 +20,12 @@
         </div>
     </div>
 </div>
-
+<div class="btn btn-danger">
+ <input type="button" class="btn btn-danger" value="Search Youtube For this boss" onclick="youtubeSearch();"/>
+</div>
 <script type="text/javascript">
           
     var uri = "http://localhost:28314/api/BossesController";
-
-        
-
-            
 
     var myUri = "http://localhost:28314/api/BossesController";
 
@@ -46,6 +44,21 @@
                        error: function (jqXHR, errorThrown) { alert(jqXHR.status) },
                    })
     
+
+
+    // Search for a specified string.
+    function youtubeSearch() {
+        var q = $('#query').val();
+        var request = gapi.client.youtube.search.list({
+            q: q,
+            part: 'snippet'
+        });
+
+        request.execute(function (response) {
+            var str = JSON.stringify(response.result);
+            $('#search-container').html('<pre>' + str + '</pre>');
+        });
+    }
 
 
             function getBosses() {
