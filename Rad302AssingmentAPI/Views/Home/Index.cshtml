@@ -1,24 +1,106 @@
 ﻿<div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS, and JavaScript.</p>
-    <p><a href="http://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
-</div>
-<div class="row">
-    <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>ASP.NET Web API is a framework that makes it easy to build HTTP services that reach
-        a broad range of clients, including browsers and mobile devices. ASP.NET Web API
-        is an ideal platform for building RESTful applications on the .NET Framework.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301870">Learn more &raquo;</a></p>
+
+    <input type="button" class="btn btn-primary" value="Get Characters" onclick="getCharacters();" />
+
+    <div class="row">
+        <div class="col-md-4">
+            <h2>Characters</h2>
+            <select id="lstCharacters" size="5" onchange="characterSelected()" style="width:100%"></select>
+        </div>
+        <div class="col-md-4">
+            <h2>Thumbnail</h2>
+            <img id="imgThumnail" width="500" height="500" />
+        </div>
     </div>
-    <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301871">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301872">Learn more &raquo;</a></p>
+
+    <div class="row">
+        <div class="col-md-4">
+            <h2>Available Comics</h2>
+            <ul id="lstComics" />
+        </div>
     </div>
 </div>
+
+<script type="text/javascript">
+            var privateKey = "f0faa157ce7cc5a8163ecc29be3010c7274170f1";
+            var publicKey = "a75b4bb82f93db233d5a8f625debb964";
+            var uri = "http://gateway.marvel.com/v1/public/";
+
+            function createHash(timestamp) {
+                return $.md5(timestamp + privateKey + publicKey);
+            }
+
+            //Only used to get the characters that are in the starter Database
+            function getMarvelAPICharacters() {
+
+                var timestamp = Date.now();
+                var hash = createHash(timestamp);
+                var suffix = 'characters'
+                var offset = 0;
+
+                var completeURL = uri + suffix + '?limit=100&offset='+offset+'&ts=' + timestamp + '&apikey=' + publicKey + '&hash=' + hash;
+
+                $.ajax(
+                    {
+                        type: 'GET',
+                        dataType: 'json',
+                        url: test,
+                        processData: true,
+                        success: function (data, status) {
+                            $.each(data.data.results, function (key, item) {
+                                $('<li>', { text: item.id }).appendTo('#lstIDs');
+                                $('<li>', { text: item.name }).appendTo('#lstNames');
+                            })
+                        },
+                        error: function (jqXHR, errorThrown) { alert(jqXHR.status) },
+                    })
+            }
+
+            var myUri = "http://localhost:7917/api/BasicCharacters";
+
+            function getCharacters() {
+                $.ajax(
+                    {
+                        type: 'GET',
+                        dataType: 'json',
+                        url: myUri,
+                        processData: true,
+                        success: function (data, status) {
+                            $.each(data, function (key, item) {
+                                $('<option>', { text: item.Name, id: item.ID }).appendTo('#lstCharacters');
+                            })
+                        },
+                        error: function (jqXHR, errorThrown) { alert(jqXHR.status) },
+                    })
+            }
+
+            function characterSelected() {
+
+                $('#lstComics').empty();
+
+                var timestamp = Date.now();
+                var hash = createHash(timestamp);
+                var characterID = $('#lstCharacters option:selected').attr('id');
+                var suffix = 'characters/' + characterID;
+                var completeURL = uri + suffix + '?&ts=' + timestamp + '&apikey=' + publicKey + '&hash=' + hash;
+
+                $.ajax(
+                    {
+                        type: 'GET',
+                        dataType: 'json',
+                        url: completeURL,
+                        processData: true,
+                        success: function (data, status) {
+                            var imageSource = data.data.results[0].thumbnail.path +'.'+ data.data.results[0].thumbnail.extension;
+                            $("#imgThumnail").attr("src", imageSource);
+
+                            $.each(data.data.results[0].comics.items, function (key, item) {
+                                $('<li>', { text: item.name }).appendTo('#lstComics');
+                            });
+
+                        },
+                        error: function (jqXHR, errorThrown) { alert(jqXHR.status) },
+                    })
+            }
+
+</script>
