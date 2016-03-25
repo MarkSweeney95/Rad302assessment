@@ -1,11 +1,11 @@
 ﻿<div class="jumbotron">
 
-    <input type="button" class="btn btn-primary" value="Get Characters" onclick="getCharacters();" />
+    <input type="button" class="btn btn-primary" value="Get Bosses" onclick="getBosses();" />
 
     <div class="row">
         <div class="col-md-4">
-            <h2>Characters</h2>
-            <select id="lstCharacters" size="5" onchange="characterSelected()" style="width:100%"></select>
+            <h2>Bosses</h2>
+            <select id="lstBosses" size="2" onchange="BossSelected()" style="width:100%"></select>
         </div>
         <div class="col-md-4">
             <h2>Thumbnail</h2>
@@ -14,51 +14,41 @@
     </div>
 
     <div class="row">
-        <div class="col-md-4">
-            <h2>Available Comics</h2>
-            <ul id="lstComics" />
+        <div class="col-md-5">
+            <h2>Boss Stats</h2>
+            <ul id="lstStats" />
         </div>
     </div>
 </div>
 
 <script type="text/javascript">
-            var privateKey = "f0faa157ce7cc5a8163ecc29be3010c7274170f1";
-            var publicKey = "a75b4bb82f93db233d5a8f625debb964";
-            var uri = "http://gateway.marvel.com/v1/public/";
+          
+    var uri = "http://localhost:28314/api/BossesController";
 
-            function createHash(timestamp) {
-                return $.md5(timestamp + privateKey + publicKey);
-            }
+        
 
-            //Only used to get the characters that are in the starter Database
-            function getMarvelAPICharacters() {
+            
 
-                var timestamp = Date.now();
-                var hash = createHash(timestamp);
-                var suffix = 'characters'
-                var offset = 0;
+    var myUri = "http://localhost:28314/api/BossesController";
 
-                var completeURL = uri + suffix + '?limit=100&offset='+offset+'&ts=' + timestamp + '&apikey=' + publicKey + '&hash=' + hash;
+    $.ajax(
+                   {
+                       type: 'GET',
+                       dataType: 'json',
+                       url: test,
+                       processData: true,
+                       success: function (data, status) {
+                           $.each(data.data.results, function (key, item) {
+                               $('<li>', { text: item.id }).appendTo('#lstIDs');
+                               $('<li>', { text: item.name }).appendTo('#lstNames');
+                           })
+                       },
+                       error: function (jqXHR, errorThrown) { alert(jqXHR.status) },
+                   })
+    
 
-                $.ajax(
-                    {
-                        type: 'GET',
-                        dataType: 'json',
-                        url: test,
-                        processData: true,
-                        success: function (data, status) {
-                            $.each(data.data.results, function (key, item) {
-                                $('<li>', { text: item.id }).appendTo('#lstIDs');
-                                $('<li>', { text: item.name }).appendTo('#lstNames');
-                            })
-                        },
-                        error: function (jqXHR, errorThrown) { alert(jqXHR.status) },
-                    })
-            }
 
-            var myUri = "http://localhost:7917/api/BasicCharacters";
-
-            function getCharacters() {
+            function getBosses() {
                 $.ajax(
                     {
                         type: 'GET',
@@ -67,21 +57,21 @@
                         processData: true,
                         success: function (data, status) {
                             $.each(data, function (key, item) {
-                                $('<option>', { text: item.Name, id: item.ID }).appendTo('#lstCharacters');
+                                $('<option>', { text: item.Name, id: item.ID }).appendTo('#lstBosses');
                             })
                         },
                         error: function (jqXHR, errorThrown) { alert(jqXHR.status) },
                     })
             }
 
-            function characterSelected() {
+            function BossSelected() {
 
-                $('#lstComics').empty();
+                $('#lstStats').empty();
 
                 var timestamp = Date.now();
                 var hash = createHash(timestamp);
-                var characterID = $('#lstCharacters option:selected').attr('id');
-                var suffix = 'characters/' + characterID;
+                var BossID = $('#lstBosses option:selected').attr('id');
+                var suffix = 'bosses/' + BossID;
                 var completeURL = uri + suffix + '?&ts=' + timestamp + '&apikey=' + publicKey + '&hash=' + hash;
 
                 $.ajax(
@@ -95,7 +85,7 @@
                             $("#imgThumnail").attr("src", imageSource);
 
                             $.each(data.data.results[0].comics.items, function (key, item) {
-                                $('<li>', { text: item.name }).appendTo('#lstComics');
+                                $('<li>', { text: item.name }).appendTo('#lstStats');
                             });
 
                         },
