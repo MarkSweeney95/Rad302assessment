@@ -1,0 +1,7 @@
+namespace Rad302AssingmentAPI.Areas.HelpPage.ModelDescriptions
+{
+    public class CollectionModelDescription : ModelDescription
+    {
+        public ModelDescription ElementDescription { get; set; }
+    }
+}
